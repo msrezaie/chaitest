@@ -49,8 +49,8 @@ chai.should();
         this.listPeople.should.not.equal(null);
       });
       it("should create a person record given name and age", async function () {
-        await this.nameField.type("Fred");
-        await this.ageField.type("10");
+        await this.nameField.type("John");
+        await this.ageField.type("30");
         await this.addPerson.click();
         await sleep(200);
         const resultData = await (
@@ -63,13 +63,32 @@ chai.should();
       });
       it("should not create a person record without an age", async function () {
         // your code goes here.  Hint: to clear the age field, you need the line
-        // await page.$eval("#age", (el) => (el.value = "")); 
+        // await page.$eval("#age", (el) => (el.value = ""));
+        await page.$eval("#age", (element) => (element.value = ""));
+        await this.addPerson.click();
+        await sleep(200);
+        const resultData = await (
+          await this.resultHandle.getProperty("textContent")
+        ).jsonValue();
+        resultData.should.include("Please enter a valid age.");
       });
       it("should return the entries just created", async function () {
-         // your code goes here
+        // your code goes here
+        await this.listPeople.click();
+        await sleep(200);
+        const resultData = await (
+          await this.resultHandle.getProperty("textContent")
+        ).jsonValue();
+        resultData.should.include("John");
       });
       it("should return the last entry.", async function () {
-         // your code goes here
+        await this.personIndex.type(`${this.lastIndex}`);
+        await this.getPerson.click();
+        await sleep(200);
+        const resultData = await (
+          await this.resultHandle.getProperty("textContent")
+        ).jsonValue();
+        resultData.should.include("John");
       });
     });
   });
